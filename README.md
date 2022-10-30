@@ -1,4 +1,6 @@
 # Kaggle U.S. Pollution
+Exploration and modeling of U.S. Pollution dataset from Kaggle.
+
 ![dataset-cover](https://user-images.githubusercontent.com/37275728/198901751-79133990-37e2-4832-a698-3697dce69f50.jpeg)
 
 ## Introduction
