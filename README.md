@@ -7,7 +7,7 @@ Exploration and modeling of U.S. Pollution dataset from Kaggle.
 
 > This dataset deals with pollution in the U.S. Pollution in the U.S. has been well documented by the U.S. EPA but it is a pain to download all the data and arrange them in a format that interests data scientists. Hence I gathered four major pollutants (Nitrogen Dioxide, Sulphur Dioxide, Carbon Monoxide and Ozone) for every day from 2000 - 2016 and place them neatly in a CSV file. 
 
-<a href="https://www.kaggle.com/c/house-prices-advanced-regression-techniques">Read more.</a>
+<a href="https://www.kaggle.com/datasets/sogun3/uspollution">Read more.</a>
 
 ## Installation
 
