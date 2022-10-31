@@ -7,6 +7,7 @@ __pycache__/
 *.so
 *.csv
 .idea
+output/
 
 # Distribution / packaging
 .Python
