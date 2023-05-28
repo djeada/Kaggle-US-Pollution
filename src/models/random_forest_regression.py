@@ -1,12 +1,12 @@
-from sklearn.linear_model import LinearRegression as SkLinearRegression
+from sklearn.ensemble import RandomForestRegressor as SkRandomForestRegressor
 import joblib
 
 from src.models.base_model import BaseModel
 
 
-class LinearRegression(BaseModel):
+class RandomForest(BaseModel):
     def __init__(self):
-        self.model = SkLinearRegression()
+        self.model = SkRandomForestRegressor()
 
     def fit(self, X, y):
         self.model.fit(X, y)
@@ -16,6 +16,4 @@ class LinearRegression(BaseModel):
 
     def save(self, filename):
         joblib.dump(self.model, filename)
-
-
 

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from typing import Tuple
 
 
 @dataclass
@@ -13,46 +12,52 @@ class DatasetSplit:
 
 
 def split_dataset(
-    x_data_frame: pd.DataFrame,
-    y_data_frame: pd.DataFrame,
-    split_ratio: float = 1 / 3,
+    x_data: pd.DataFrame,
+    y_data: pd.DataFrame,
+    split_ratio: float = 0.8,
     save_to_file: bool = False,
 ) -> DatasetSplit:
     """
-    Splits the data frame into a train and test set.
-    :param data_frame: The data frame to split.
-    :param split_ratio: The ratio of the test set.
+    Splits the data frames into a train and test set.
+    :param x_data: The input data frame to split.
+    :param y_data: The output data frame to split.
+    :param split_ratio: The ratio of the training set.
     :param save_to_file: Whether to save the data frames to file.
-    :return: The train and test data frames.
+    :return: The DatasetSplit containing train and test data frames.
     """
 
-    train_test_data = train_test_split(
-        x_data_frame, y_data_frame, test_size=split_ratio, random_state=85
-    )
+    split_point = int(len(x_data) * split_ratio)
+    x_train = x_data[:split_point]
+    y_train = y_data[:split_point]
 
-    train_x = train_test_data[0]
-    train_y = train_test_data[2]
-
-    test_x = train_test_data[1]
-    test_y = train_test_data[3]
+    x_test = x_data[split_point:]
+    y_test = y_data[split_point:]
 
     if save_to_file:
-        train_x.to_csv("../output/train_x.csv")
-        train_y.to_csv("../output/train_y.csv")
-        test_x.to_csv("../output/test_x.csv")
-        test_y.to_csv("../output/test_y.csv")
+        x_train.to_csv("../output/x_train.csv")
+        y_train.to_csv("../output/y_train.csv")
+        x_test.to_csv("../output/x_test.csv")
+        y_test.to_csv("../output/y_test.csv")
 
-    return DatasetSplit(train_x, train_y, test_x, test_y)
+    return DatasetSplit(x_train, y_train, x_test, y_test)
 
 
 def load_dataset_split() -> DatasetSplit:
     """
     Loads the train and test data frames from file.
-    :return: The train and test data frames.
+    :return: The DatasetSplit containing train and test data frames.
     """
-    train_x = pd.read_csv("../output/train_x.csv")
-    train_y = pd.read_csv("../output/train_y.csv")
-    test_x = pd.read_csv("../output/test_x.csv")
-    test_y = pd.read_csv("../output/test_y.csv")
+    x_train = pd.read_csv(
+        "../output/x_train.csv", index_col="Date Local", parse_dates=True
+    )
+    y_train = pd.read_csv(
+        "../output/y_train.csv", index_col="Date Local", parse_dates=True
+    )
+    x_test = pd.read_csv(
+        "../output/x_test.csv", index_col="Date Local", parse_dates=True
+    )
+    y_test = pd.read_csv(
+        "../output/y_test.csv", index_col="Date Local", parse_dates=True
+    )
 
-    return DatasetSplit(train_x, train_y, test_x, test_y)
+    return DatasetSplit(x_train, y_train, x_test, y_test)
