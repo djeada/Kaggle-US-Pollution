@@ -1,0 +1,35 @@
+# config.yaml
+
+data:
+  source_url: "sogun3/uspollution"
+  local_path: "data/us_pollution_data.csv"
+  columns_to_keep: ["date", "year", "month", "state", "city", "no2_mean", "o3_mean", "so2_mean", "co_mean"]
+  input_headers: ["year", "month", "state", "city"]
+  pollutant_headers: ["no2_mean", "o3_mean", "so2_mean", "co_mean"]
+  test_size: 0.2
+  random_state: 42
+  specific_cities:
+    - { state: "California", city: "Los Angeles" }
+    - { state: "New York", city: "New York" }
+
+model:
+  type: "random_forest"
+  hyperparameters:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+
+logging:
+  version: 1
+  disable_existing_loggers: False
+  formatters:
+    simple:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: simple
+      level: DEBUG
+  root:
+    handlers: [console]
+    level: DEBUG

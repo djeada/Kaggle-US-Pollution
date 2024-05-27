@@ -1,95 +1,82 @@
+import logging
+import yaml
 from pathlib import Path
-import pandas as pd
-
-from src.models.lasso_regression import Lasso
-from src.models import LinearRegression
-from src.models.random_forest_regression import RandomForest
-from src.models.xgb_regression import XGB
-from src.postprocessing.performance_metrics import evaluate_models
-from src.postprocessing.plot_prediction import prepare_and_plot_data
-from src.preprocessing.preprocess_data import load_and_preprocess_data
-
-DATASET_PATH = Path("../resources/pollution_us_2000_2016.csv")
-INPUT_HEADERS = ["Year", "Month", "State", "City"]
-OUTPUT_HEADERS = ["NO2 AQI", "O3 AQI", "SO2 AQI", "CO AQI"]
+from src.preprocessing.download_data import assert_dataset_exists
+from src.preprocessing.preprocess_data import preprocess_data
+from src.preprocessing.split_dataset import split_dataset
+from models.model_training import train_model, evaluate_model
+from postprocessing.plot_prediction import plot_predictions
+from config.logging_config import setup_logging
 
 
-def train_models(dataset_split):
-    model_types = [LinearRegression, Lasso, RandomForest, XGB]
-    models = []
-
-    for model_type in model_types:
-        print(f"Training {model_type.__name__} model...")
-        model = model_type()
-        model.fit(dataset_split.train_x.to_numpy(), dataset_split.train_y.to_numpy())
-        models.append(model)
-        print(f"{model_type.__name__} model trained successfully.")
-
-    return models
-
-
-def make_prediction(best_model, year, month, state, city, state_mapper, city_mapper):
-    prediction = best_model.predict(
-        [
-            [
-                year,
-                month,
-                state_mapper.transform([state])[0],
-                city_mapper.transform([city])[0],
-            ]
-        ]
-    )
-    return prediction
+def load_config(config_path="config/config.yaml"):
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+    return config
 
 
 def main():
-    print("Loading and preprocessing the data...")
-    dataset, dataset_split, state_mapper, city_mapper = load_and_preprocess_data(
-        DATASET_PATH, INPUT_HEADERS, OUTPUT_HEADERS
+    config = load_config()
+    setup_logging()
+
+    logger = logging.getLogger(__name__)
+    logger.info("Starting the pipeline")
+
+    dataset_path = Path(config["data"]["local_path"])
+    output_path = Path("data/us_pollution_data_preprocessed.csv")
+    dataset_url = config["data"]["source_url"]
+
+    # Ensure dataset exists
+    assert_dataset_exists(dataset_path, dataset_url)
+
+    # Preprocess the data (which includes cleaning)
+    logger.info("Preprocessing data")
+    cleaned_data, state_mapper, city_mapper = preprocess_data(
+        file_path=str(dataset_path),
+        output_path=str(output_path),
+        input_headers=config["data"]["input_headers"],
+        pollutant_headers=config["data"]["pollutant_headers"],
     )
 
-    print("Training the models...")
-    models = train_models(dataset_split)
-
-    print("Evaluating the models...")
-    best_model, scores = evaluate_models(models, dataset_split)
-    print(
-        f"The best model is {best_model['model']} with an r2_score of {best_model['r2_score']}"
+    # Split the data
+    logger.info("Splitting data")
+    train_data, test_data = split_dataset(
+        file_path=str(output_path),
+        test_size=config["data"]["test_size"],
+        random_state=config["data"]["random_state"],
     )
 
-    print("Making a prediction for a specific date, city, and state...")
-    year, month, state, city = (
-        pd.to_datetime("2040-01-01").year,
-        pd.to_datetime("2040-01-01").month,
-        "California",
-        "Los Angeles",
+    # Train the models
+    logger.info("Training models")
+    models = train_model(
+        train_data=train_data,
+        input_headers=config["data"]["input_headers"],
+        pollutant_headers=config["data"]["pollutant_headers"],
+        config=config["model"],
     )
-    prediction = make_prediction(
-        best_model["model_instance"],
-        year,
-        month,
-        state,
-        city,
-        state_mapper,
-        city_mapper,
-    )
-    print(f"The predicted AQI for {city}, {state} on 2040-01-01 is {prediction[0]}")
 
-    print(
-        "Preparing and plotting historical and future data for the selected city and state..."
+    # Evaluate the models
+    logger.info("Evaluating models")
+    evaluation_metrics = evaluate_model(
+        models=models,
+        test_data=test_data,
+        input_headers=config["data"]["input_headers"],
+        pollutant_headers=config["data"]["pollutant_headers"],
     )
-    prepare_and_plot_data(
-        2000,
-        "2020-01-01",
-        "2040-12-31",
-        state,
-        city,
-        best_model["model_instance"],
-        dataset,
-        state_mapper,
-        city_mapper,
+
+    # Plot predictions
+    logger.info("Plotting predictions")
+    plot_predictions(
+        models=models,
+        test_data=test_data,
+        input_headers=config["data"]["input_headers"],
+        pollutant_headers=config["data"]["pollutant_headers"],
+        specific_cities=config["data"]["specific_cities"],
+        state_mapper=state_mapper, city_mapper=city_mapper
     )
-    print("Plotting complete.")
+
+    logger.info("Pipeline completed successfully")
+    logger.info(f"Evaluation Metrics: {evaluation_metrics}")
 
 
 if __name__ == "__main__":

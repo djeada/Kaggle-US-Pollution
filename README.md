@@ -30,6 +30,40 @@ cd src
 python3 main.py
 ```
 
+Data Engineering
+
+    Data Cleaning and Preprocessing: Handle missing values, normalize data, and manage temporal and spatial granularity.
+    Feature Engineering: Create relevant features such as average pollutant levels over time, seasonal trends, and geographical clustering.
+
+Machine Learning Models
+
+ Exploratory Data Analysis (EDA)
+ Visualize trends and patterns using time series plots, heatmaps, and geographical maps.
+ Identify correlations between different pollutants and external factors.
+
+Predictive Modeling
+ Time Series Analysis: Utilize ARIMA (AutoRegressive Integrated Moving Average) and SARIMA (Seasonal ARIMA) models to forecast future pollution levels.
+ Regression Models: Apply linear regression, decision trees, and random forests to understand the impact of various factors on pollution levels.
+ Neural Networks: Implement LSTM (Long Short-Term Memory) networks for advanced time series forecasting.
+
+Model Evaluation
+
+    Training and Validation: Split the data into training and validation sets using techniques such as k-fold cross-validation to ensure robust model performance.
+    Metrics: Evaluate models using metrics like RMSE (Root Mean Squared Error) for regression tasks, accuracy and F1 score for classification tasks, and silhouette score for clustering tasks.
+    Model Interpretation: Use SHAP (SHapley Additive exPlanations) values to interpret the impact of different features on the model’s predictions.
+
+Expected Outcomes
+
+    Trends and Insights: Detailed insights into pollution trends over the years, including seasonal variations and geographical hotspots.
+    Predictive Insights: Reliable forecasts of pollution levels, helping in proactive measures for pollution control.
+    Policy Recommendations: Data-driven recommendations for policymakers to mitigate pollution based on the identified key factors.
+
+Assessment
+
+    Model Performance: Assess models based on prediction accuracy, interpretability, and computational efficiency.
+    Real-world Applicability: Evaluate the practical applicability of the model predictions in real-world scenarios by comparing them with actual observed data.
+
+
 ## Dataset
 
 Our dataset includes historical AQI data with key measurements for pollutants such as Nitrogen Dioxide (NO2), Ozone (O3), Sulfur Dioxide (SO2), and Carbon Monoxide (CO). The data also includes information about the year, month, and location (city and state) of each measurement.
