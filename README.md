@@ -79,15 +79,106 @@ We explore different machine learning models for this task, including:
 
 Each model is trained on our dataset and then used to make predictions about future AQI levels. The performance of the models is evaluated using metrics like R2 Score, Root Mean Squared Error (RMSE), and Normalized RMSE.
 
-## Findings
+## Results for Regression Models
 
-Our experiments suggest that while the machine learning models are able to fit the data to some extent, the predictive power is somewhat limited. The R2 scores range from negative values for Linear and Lasso Regression, indicating they perform worse than a horizontal line, to approximately 0.20 for Random Forest and 0.24 for XGBoost.
+The table summarizes the performance of four different models (Random Forest, Linear Regression, MLP, XGBoost) across four different pollutants (NO2, O3, SO2, CO). The metrics used for evaluation are Mean Squared Error (MSE), Mean Absolute Error (MAE), and R-squared (R2).
 
-The RMSE values range from 11.22 for Linear Regression, 11.19 for Lasso, down to 9.29 for Random Forest and 8.82 for XGBoost. Lower RMSE values indicate better fit, so Random Forest and XGBoost perform better in this aspect, but there is still room for improvement.
+| Pollutant | Model Name         | MSE       | MAE       | R2         |
+|-----------|--------------------|-----------|-----------|------------|
+| no2_mean  | random_forest      | 0.500847  | 0.527968  | 0.487442   |
+| no2_mean  | linear_regression  | 0.893703  | 0.724917  | 0.085399   |
+| no2_mean  | mlp                | 1.631936  | 1.111352  | -0.670096  |
+| no2_mean  | xgboost            | 0.375543  | 0.443502  | 0.615676   |
+| o3_mean   | random_forest      | 0.553222  | 0.584864  | 0.448226   |
+| o3_mean   | linear_regression  | 0.973129  | 0.794671  | 0.029419   |
+| o3_mean   | mlp                | 1.105443  | 0.850906  | -0.102549  |
+| o3_mean   | xgboost            | 0.479388  | 0.545475  | 0.521867   |
+| so2_mean  | random_forest      | 0.473900  | 0.383522  | 0.508116   |
+| so2_mean  | linear_regression  | 0.808692  | 0.569529  | 0.160620   |
+| so2_mean  | mlp                | 3.265556  | 1.689203  | -2.389476  |
+| so2_mean  | xgboost            | 0.457051  | 0.381529  | 0.525605   |
+| co_mean   | random_forest      | 0.438661  | 0.428127  | 0.544274   |
+| co_mean   | linear_regression  | 0.827658  | 0.610868  | 0.140144   |
+| co_mean   | mlp                | 1.156388  | 0.876141  | -0.201374  |
+| co_mean   | xgboost            | 0.398178  | 0.407515  | 0.586332   |
 
-Based on these findings, the Random Forest and XGBoost models may be used for preliminary forecasting, but their reliability is still questionable. The data may have too much randomness and might lack clear trends which are essential for reliable time-series predictions. 
+1. Model Performance Comparison:
+   - **XGBoost consistently outperforms other models** in terms of lower MSE and higher R2 values across all pollutants. This suggests that XGBoost is the most accurate model for predicting pollutant levels.
+   - **Random Forest is the second-best performer**, showing good balance between MSE, MAE, and R2 values, but slightly less effective than XGBoost.
+   - **Linear Regression performs poorly** compared to ensemble methods (Random Forest and XGBoost), indicating it may not capture the complexity in the data as well.
+   - **MLP (Multi-Layer Perceptron) performs the worst**, with the highest MSE and lowest (often negative) R2 values, indicating it is not suitable for this dataset.
 
-Further investigation is required to identify other features or different model architectures that could enhance the performance.
+2. Pollutant-wise Observations:
+   - **NO2 Mean:** XGBoost has the best performance (MSE: 0.375543, R2: 0.615676), while MLP has the worst (MSE: 1.631936, R2: -0.670096).
+   - **O3 Mean:** XGBoost again leads (MSE: 0.479388, R2: 0.521867), with MLP showing poor performance (MSE: 1.105443, R2: -0.102549).
+   - **SO2 Mean:** XGBoost and Random Forest are close in performance, with XGBoost slightly better (MSE: 0.457051, R2: 0.525605).
+   - **CO Mean:** XGBoost performs best (MSE: 0.398178, R2: 0.586332), with MLP having the poorest results (MSE: 1.156388, R2: -0.201374).
+
+### Plots for Predictions of the Best Model (XGBoost) for Train Data
+
+The following plots illustrate the predictions made by the XGBoost model on the training data for each pollutant. These visualizations help in understanding how well the model captures the underlying patterns and relationships in the data.
+
+I. CO Mean
+
+![predictions_plot_bundled_co_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/dafbd507-7896-448f-91d6-a7bfa6db892d)
+
+II. NO2 Mean
+
+![predictions_plot_bundled_no2_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/266b49c5-f203-4f5e-8afa-ddc7ba7f7af1)
+
+III. O3 Mean
+
+![predictions_plot_bundled_o3_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/008c22b1-2a83-4c95-959b-13eaccdd43b0)
+
+IV. SO2 Mean
+
+![predictions_plot_bundled_so2_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/f9e35644-c690-4e25-bda3-5c3d60d42061)
+
+## Analysis of Actual vs Predicted CO Mean in New York, NY
+
+![predictions_plot_New York_New York_co_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/c7ad16f6-295f-4d28-b1d4-afcca2064c0d)
+
+The above graph illustrates the comparison between actual and predicted CO mean levels over time for New York City, NY. The plot includes actual historical data, model predictions for the same period, and future predictions extending beyond the historical dataset.
+
+### Observations
+
+1. **Trends Over Time:**
+   - The actual CO mean levels (blue bars) show a decreasing trend over the observed period, indicating an overall improvement in air quality in terms of CO levels.
+   - The predicted CO mean levels (orange bars) closely follow the actual data, demonstrating the model's effectiveness in capturing the trend and variations in CO levels.
+
+2. **Model Performance:**
+   - The prediction bars (orange) generally align well with the actual bars (blue), suggesting that the model has good accuracy for historical data.
+   - The future predicted values (green bars) continue the downward trend, indicating that the model anticipates further improvements in CO levels.
+
+3. **Trend Line:**
+   - The red dashed line represents the trend over the entire period, reinforcing the observed decrease in CO levels.
+
+### Insights
+
+1. **Accuracy and Reliability:**
+   - The model demonstrates high accuracy, as evidenced by the close alignment between the actual and predicted values for the historical period.
+   - This accuracy instills confidence in the model's future predictions.
+
+2. **Future Predictions:**
+   - The predicted future values suggest continued improvement in CO levels. If the model's assumptions hold, we can expect further reductions in CO pollution in New York City.
+   - Policy makers and environmental agencies can use these predictions for planning and implementing further air quality improvements.
+
+3. **Model Application:**
+   - This analysis is useful for urban planners, environmentalists, and public health officials. Accurate predictions help in understanding the impact of current policies and in making informed decisions for future interventions.
+  
+### Other Pollutants
+
+I. NO2 Mean
+
+![predictions_plot_New York_New York_no2_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/9d17a12d-79e2-4e31-b082-047e2764b970)
+
+II. O3 Mean
+
+![predictions_plot_New York_New York_o3_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/c5b26e6e-be02-419b-9776-51199895bcfa)
+
+III. SO2 Mean
+
+![predictions_plot_New York_New York_so2_mean](https://github.com/djeada/Kaggle-US-Pollution/assets/37275728/3c25451d-360d-436d-99b5-edb41549e254)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
