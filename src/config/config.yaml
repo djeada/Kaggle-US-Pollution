@@ -10,33 +10,49 @@ data:
     - { state: "New York", city: "New York" }
 
 models:
-  # regression:
-  #  - type: "random_forest"
-  #    hyperparameters:
-  #      n_estimators: 100
-  #      max_depth: 10
-  #      random_state: 42
-  #  - type: "linear_regression"
-  #    hyperparameters: {}
-  #  - type: "mlp"
-  #    hyperparameters:
-  #      hidden_layer_sizes: [100]
-  #      max_iter: 200
-  #      random_state: 42
+  regression:
+    - type: "random_forest"
+      hyperparameters:
+        n_estimators: 100
+        max_depth: 10
+        random_state: 42
+    - type: "linear_regression"
+      hyperparameters: {}
+    - type: "mlp"
+      hyperparameters:
+        hidden_layer_sizes: [100]
+        max_iter: 200
+        random_state: 42
+    - type: "xgboost"
+      hyperparameters:
+        n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
+        random_state: 42
   time_series:
     - type: "arima"
       hyperparameters:
-        order: [1, 1, 1]
+        p_range: [0, 4]
+        d_range: [0, 3]
+        q_range: [0, 4]
       specific_cities:
-        - { state: "California", city: "Los Angeles" }
-        - { state: "New York", city: "New York" }
-    #- type: "sarima"
-    #  hyperparameters:
-    #    order: [1, 1, 1]
-    #    seasonal_order: [1, 1, 1, 12]
-    #  specific_cities:
-    #    - { state: "California", city: "Los Angeles" }
-    #    - { state: "New York", city: "New York" }
+        - state: "California"
+          city: "Los Angeles"
+        - state: "New York"
+          city: "New York"
+    - type: "sarima"
+      hyperparameters:
+        p_range: [0, 4]
+        d_range: [0, 3]
+        q_range: [0, 4]
+        sp_range: [0, 3]
+        sd_range: [0, 2]
+        sq_range: [0, 3]
+      specific_cities:
+        - state: "California"
+          city: "Los Angeles"
+        - state: "New York"
+          city: "New York"
 
 logging:
   version: 1
