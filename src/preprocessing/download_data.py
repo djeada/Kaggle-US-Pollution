@@ -64,7 +64,7 @@ def download_data(dataset_url: str, dataset_path: Path) -> None:
         logger.error(f"Failed to download dataset: {e}")
 
 
-def assert_dataset_exists(dataset_path: Path, dataset_url: str) -> None:
+def ensure_dataset_exists(dataset_path: Path, dataset_url: str) -> None:
     """
     Asserts that the dataset exists.
     If not, it downloads the dataset.

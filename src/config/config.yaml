@@ -1,10 +1,7 @@
-# config.yaml
-
 data:
   source_url: "sogun3/uspollution"
   local_path: "data/us_pollution_data.csv"
-  columns_to_keep: ["date", "year", "month", "state", "city", "no2_mean", "o3_mean", "so2_mean", "co_mean"]
-  input_headers: ["year", "month", "state", "city"]
+  input_headers: ["year", "month", "day", "state", "city"]
   pollutant_headers: ["no2_mean", "o3_mean", "so2_mean", "co_mean"]
   test_size: 0.2
   random_state: 42
@@ -12,12 +9,34 @@ data:
     - { state: "California", city: "Los Angeles" }
     - { state: "New York", city: "New York" }
 
-model:
-  type: "random_forest"
-  hyperparameters:
-    n_estimators: 100
-    max_depth: 10
-    random_state: 42
+models:
+  # regression:
+  #  - type: "random_forest"
+  #    hyperparameters:
+  #      n_estimators: 100
+  #      max_depth: 10
+  #      random_state: 42
+  #  - type: "linear_regression"
+  #    hyperparameters: {}
+  #  - type: "mlp"
+  #    hyperparameters:
+  #      hidden_layer_sizes: [100]
+  #      max_iter: 200
+  #      random_state: 42
+  time_series:
+    - type: "arima"
+      hyperparameters:
+        order: [1, 1, 1]
+      specific_cities:
+        - { state: "California", city: "Los Angeles" }
+        - { state: "New York", city: "New York" }
+    #- type: "sarima"
+    #  hyperparameters:
+    #    order: [1, 1, 1]
+    #    seasonal_order: [1, 1, 1, 12]
+    #  specific_cities:
+    #    - { state: "California", city: "Los Angeles" }
+    #    - { state: "New York", city: "New York" }
 
 logging:
   version: 1
@@ -29,7 +48,12 @@ logging:
     console:
       class: logging.StreamHandler
       formatter: simple
-      level: DEBUG
+      level: INFO
+    file:
+      class: logging.FileHandler
+      formatter: simple
+      level: INFO
+      filename: app.log
   root:
-    handlers: [console]
-    level: DEBUG
+    handlers: [console, file]
+    level: INFO
