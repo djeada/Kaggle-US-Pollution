@@ -11,24 +11,159 @@ To analyze trends, predict future pollution levels, and identify factors influen
 
 ## Installation
 
-Follow the steps:
+Follow these steps to set up the project:
 
-- Download this repository: 
- 
- ```bash 
- git clone https://github.com/djeada/kaggle-us-pollution.git
- ```
- 
-- Install <i>virtualenv</i> (if it's not already installed).
-- Open the terminal from the project directory and run the following commands:
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/djeada/kaggle-us-pollution.git
+    ```
 
-```bash
-virtualenv env
-source env/bin/activate
-pip3 install -r requirements.txt
-cd src
-python3 main.py
+2. Navigate to the project directory:
+    ```bash
+    cd kaggle-us-pollution
+    ```
+
+3. Install `virtualenv` if it's not already installed:
+    ```bash
+    pip install virtualenv
+    ```
+
+4. Create and activate a virtual environment:
+    ```bash
+    virtualenv env
+    source env/bin/activate
+    ```
+
+5. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+6. Run the main script:
+    ```bash
+    cd src
+    python3 main.py
+    ```
+
+## Usage
+
+The script requires a configuration file to specify various parameters for data processing and model training. Below is an example configuration file and an explanation of each section:
+
+### Data Configuration
+
+```yaml
+data:
+  source_url: "sogun3/uspollution"
+  local_path: "data/us_pollution_data.csv"
+  input_headers: ["year", "month", "day", "state", "city"]
+  pollutant_headers: ["no2_mean", "o3_mean", "so2_mean", "co_mean"]
+  test_size: 0.2
+  random_state: 42
+  specific_cities:
+    - { state: "California", city: "Los Angeles" }
+    - { state: "New York", city: "New York" }
 ```
+
+- **source_url**: URL to download the dataset if it's not available locally.
+- **local_path**: Path to the local CSV file containing the pollution data.
+- **input_headers**: List of columns to be used as input features.
+- **pollutant_headers**: List of pollutant columns to be used as target variables.
+- **test_size**: Proportion of the dataset to include in the test split.
+- **random_state**: Random seed for reproducibility.
+- **specific_cities**: List of specific cities and states to filter the dataset.
+
+### Regression Models
+
+```yaml
+
+models:
+  regression:
+    - type: "random_forest"
+      hyperparameters:
+        n_estimators: 100
+        max_depth: 10
+        random_state: 42
+    - type: "linear_regression"
+      hyperparameters: {}
+    - type: "mlp"
+      hyperparameters:
+        hidden_layer_sizes: [100]
+        max_iter: 200
+        random_state: 42
+    - type: "xgboost"
+      hyperparameters:
+        n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
+        random_state: 42
+```
+
+- **type**: Specifies the type of regression model (e.g., "random_forest", "linear_regression", "mlp", "xgboost").
+- **hyperparameters**: Dictionary of hyperparameters for each model.
+
+### Time Series Models
+
+```yaml
+  time_series:
+    - type: "arima"
+      hyperparameters:
+        p_range: [0, 4]
+        d_range: [0, 3]
+        q_range: [0, 4]
+      specific_cities:
+        - state: "California"
+          city: "Los Angeles"
+        - state: "New York"
+          city: "New York"
+    - type: "sarima"
+      hyperparameters:
+        p_range: [0, 4]
+        d_range: [0, 3]
+        q_range: [0, 4]
+        sp_range: [0, 3]
+        sd_range: [0, 2]
+        sq_range: [0, 3]
+      specific_cities:
+        - state: "California"
+          city: "Los Angeles"
+        - state: "New York"
+          city: "New York"
+```
+
+- **type**: Specifies the type of time series model (e.g., "arima", "sarima").
+- **hyperparameters**: Dictionary of hyperparameters for each model, including ranges for parameters like p, d, q, sp, sd, and sq.
+- **specific_cities**: Cities and states to focus the time series analysis on.
+
+### Logging Configuration
+
+```yaml
+
+logging:
+  version: 1
+  disable_existing_loggers: False
+  formatters:
+    simple:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: simple
+      level: INFO
+    file:
+      class: logging.FileHandler
+      formatter: simple
+      level: INFO
+      filename: app.log
+  root:
+    handlers: [console, file]
+    level: INFO
+```
+
+- **version**: Version of the logging configuration schema.
+- **disable_existing_loggers**: Whether to disable existing loggers.
+- **formatters**: Defines the format of log messages.
+- **handlers**: Specifies where log messages are sent (e.g., console, file).
+- **root**: Root logger configuration, combining all handlers and setting the logging level.
 
 ## Dataset
 
