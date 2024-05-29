@@ -30,54 +30,74 @@ cd src
 python3 main.py
 ```
 
-Data Engineering
-
-    Data Cleaning and Preprocessing: Handle missing values, normalize data, and manage temporal and spatial granularity.
-    Feature Engineering: Create relevant features such as average pollutant levels over time, seasonal trends, and geographical clustering.
-
-Machine Learning Models
-
- Exploratory Data Analysis (EDA)
- Visualize trends and patterns using time series plots, heatmaps, and geographical maps.
- Identify correlations between different pollutants and external factors.
-
-Predictive Modeling
- Time Series Analysis: Utilize ARIMA (AutoRegressive Integrated Moving Average) and SARIMA (Seasonal ARIMA) models to forecast future pollution levels.
- Regression Models: Apply linear regression, decision trees, and random forests to understand the impact of various factors on pollution levels.
- Neural Networks: Implement LSTM (Long Short-Term Memory) networks for advanced time series forecasting.
-
-Model Evaluation
-
-    Training and Validation: Split the data into training and validation sets using techniques such as k-fold cross-validation to ensure robust model performance.
-    Metrics: Evaluate models using metrics like RMSE (Root Mean Squared Error) for regression tasks, accuracy and F1 score for classification tasks, and silhouette score for clustering tasks.
-    Model Interpretation: Use SHAP (SHapley Additive exPlanations) values to interpret the impact of different features on the model’s predictions.
-
-Expected Outcomes
-
-    Trends and Insights: Detailed insights into pollution trends over the years, including seasonal variations and geographical hotspots.
-    Predictive Insights: Reliable forecasts of pollution levels, helping in proactive measures for pollution control.
-    Policy Recommendations: Data-driven recommendations for policymakers to mitigate pollution based on the identified key factors.
-
-Assessment
-
-    Model Performance: Assess models based on prediction accuracy, interpretability, and computational efficiency.
-    Real-world Applicability: Evaluate the practical applicability of the model predictions in real-world scenarios by comparing them with actual observed data.
-
-
 ## Dataset
 
-Our dataset includes historical AQI data with key measurements for pollutants such as Nitrogen Dioxide (NO2), Ozone (O3), Sulfur Dioxide (SO2), and Carbon Monoxide (CO). The data also includes information about the year, month, and location (city and state) of each measurement.
+The dataset used for this analysis contains detailed information on air quality measurements across various locations and dates. Each record in the dataset includes multiple attributes that describe the pollutant levels and other related details. Below is a brief overview of the key columns present in the dataset:
+
+- **State Code**: Numerical code representing the state.
+- **County Code**: Numerical code representing the county.
+- **Site Num**: Identification number of the monitoring site.
+- **Address**: Address of the monitoring site.
+- **State**: Name of the state.
+- **County**: Name of the county.
+- **City**: Name of the city.
+- **Date Local**: Date of the measurement.
+- **NO2 Units**: Measurement units for Nitrogen Dioxide (NO2).
+- **NO2 Mean**: Mean value of NO2 on the given date.
+- **NO2 1st Max Value**: Maximum value of NO2 recorded in a single hour.
+- **NO2 1st Max Hour**: Hour of the day when the maximum NO2 value was recorded.
+- **NO2 AQI**: Air Quality Index for NO2.
+- **O3 Units**: Measurement units for Ozone (O3).
+- **O3 Mean**: Mean value of O3 on the given date.
+- **O3 1st Max Value**: Maximum value of O3 recorded in a single hour.
+- **O3 1st Max Hour**: Hour of the day when the maximum O3 value was recorded.
+- **O3 AQI**: Air Quality Index for O3.
+- **SO2 Units**: Measurement units for Sulfur Dioxide (SO2).
+- **SO2 Mean**: Mean value of SO2 on the given date.
+- **SO2 1st Max Value**: Maximum value of SO2 recorded in a single hour.
+- **SO2 1st Max Hour**: Hour of the day when the maximum SO2 value was recorded.
+- **SO2 AQI**: Air Quality Index for SO2.
+- **CO Units**: Measurement units for Carbon Monoxide (CO).
+- **CO Mean**: Mean value of CO on the given date.
+- **CO 1st Max Value**: Maximum value of CO recorded in a single hour.
+- **CO 1st Max Hour**: Hour of the day when the maximum CO value was recorded.
+- **CO AQI**: Air Quality Index for CO.
+
+### Example Records
+
+Here are some example records from the dataset:
+
+| State Code | County Code | Site Num | Address                            | State    | County  | City    | Date Local | NO2 Units        | NO2 Mean | NO2 1st Max Value | NO2 1st Max Hour | NO2 AQI | O3 Units         | O3 Mean | O3 1st Max Value | O3 1st Max Hour | O3 AQI | SO2 Units        | SO2 Mean | SO2 1st Max Value | SO2 1st Max Hour | SO2 AQI | CO Units         | CO Mean  | CO 1st Max Value | CO 1st Max Hour | CO AQI |
+|------------|-------------|----------|------------------------------------|----------|---------|---------|-------------|------------------|----------|------------------|------------------|---------|------------------|---------|------------------|-----------------|--------|------------------|----------|------------------|-----------------|--------|------------------|----------|------------------|-----------------|--------|
+| 4          | 13          | 3002     | 1645 E ROOSEVELT ST-CENTRAL PHOENIX STN | Arizona | Maricopa | Phoenix | 2000-01-01  | Parts per billion | 19.042   | 49.0             | 19               | 46      | Parts per million | 0.0225  | 0.04             | 10              | 34     | Parts per billion | 3.0      | 9.0              | 21              | 13     | Parts per million | 1.146    | 4.2              | 21              |        |
+| 4          | 13          | 3002     | 1645 E ROOSEVELT ST-CENTRAL PHOENIX STN | Arizona | Maricopa | Phoenix | 2000-01-01  | Parts per billion | 19.042   | 49.0             | 19               | 46      | Parts per million | 0.0225  | 0.04             | 10              | 34     | Parts per billion | 3.0      | 9.0              | 21              | 13     | Parts per million | 0.879    | 2.2              | 23              | 25     |
+| 4          | 13          | 3002     | 1645 E ROOSEVELT ST-CENTRAL PHOENIX STN | Arizona | Maricopa | Phoenix | 2000-01-01  | Parts per billion | 19.042   | 49.0             | 19               | 46      | Parts per million | 0.0225  | 0.04             | 10              | 34     | Parts per billion | 2.975    | 6.6              | 23              |        | Parts per million | 1.146    | 4.2              | 21              |        |
+| 4          | 13          | 3002     | 1645 E ROOSEVELT ST-CENTRAL PHOENIX STN | Arizona | Maricopa | Phoenix | 2000-01-01  | Parts per billion | 19.042   | 49.0             | 19               | 46      | Parts per million | 0.0225  | 0.04             | 10              | 34     | Parts per billion | 2.975    | 6.6              | 23              |        | Parts per million | 0.879    | 2.2              | 23              | 25     |
+| 4          | 13          | 3002     | 1645 E ROOSEVELT ST-CENTRAL PHOENIX STN | Arizona | Maricopa | Phoenix | 2000-01-02  | Parts per billion | 22.958   | 36.0             | 19               | 34      | Parts per million | 0.0134  | 0.032            | 10              | 27     | Parts per billion | 1.958    | 3.0              | 22              | 4      | Parts per million | 0.850    | 1.6              | 23              |        |
+
+## Data Engineering
+
+The data engineering process involved several key steps to prepare and transform the dataset for analysis and modeling. First, the data was loaded from a CSV file, and the column names were standardized to lowercase snake case. Then, columns were renamed according to a specified dictionary, and only the necessary columns were filtered out. The date columns were converted to datetime format, allowing for the creation of additional time-related features such as year, month, day, day of the week, week of the year, and weekend indicators. Pollutant columns were normalized by subtracting the mean and dividing by the standard deviation. Duplicate rows were handled by grouping the data by specified columns and averaging the values. Further cleaning steps included label encoding categorical features, replacing infinite values with NaNs, filling NaNs with column means, and dropping any remaining NaN values and duplicates. This comprehensive data engineering process resulted in two distinct datasets, each tailored for specific types of analysis:
+
+I. **The time series dataset** was created by retaining columns necessary for temporal analysis, including the date and newly created time-related features. This dataset was saved for time series analysis, enabling the examination of trends and patterns over time.
+
+II. **The regression dataset** was tailored for predictive modeling by selecting input features and pollutant columns. This dataset was cleaned further by label encoding categorical variables and handling missing values, making it suitable for regression analysis and model training.
 
 ## Methodology
 
-We explore different machine learning models for this task, including:
+### I. Regression
+We explored various machine learning models for regression tasks to predict pollutant levels, including:
 
 - Linear Regression
-- Lasso Regression
+- Multi-Layer Perceptron (MLP)
 - Random Forest
 - XGBoost
 
-Each model is trained on our dataset and then used to make predictions about future AQI levels. The performance of the models is evaluated using metrics like R2 Score, Root Mean Squared Error (RMSE), and Normalized RMSE.
+### II. Time Series
+
+For time series analysis, we utilized ARIMA (AutoRegressive Integrated Moving Average) and SARIMA (Seasonal ARIMA) models to forecast future pollution levels.
+
+Each model was trained on the training dataset and then used to make predictions about future pollutant levels, allowing us to evaluate their performance and effectiveness in capturing trends and patterns.
 
 ## Results for Regression Models
 
