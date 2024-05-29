@@ -1,24 +1,22 @@
 import logging
-import yaml
 from pathlib import Path
 
+import yaml
+
+from config.logging_config import setup_logging
 from src.models.regression_models import train_regression_models
 from src.models.time_series_models import train_time_series_models
-from src.postprocessing.plot_regression_prediction import plot_regression_predictions
-from src.postprocessing.plot_time_series_prediction import plot_time_series_predictions
+from src.postprocessing.plot_regression_prediction import \
+    plot_regression_predictions
+from src.postprocessing.plot_time_series_prediction import \
+    plot_time_series_predictions
 from src.postprocessing.regression_performance_metrics import (
-    evaluate_regression_models,
-    choose_best_regression_models,
-)
+    choose_best_regression_models, evaluate_regression_models)
 from src.postprocessing.time_series_performance_metrics import (
-    evaluate_time_series_models,
-    choose_best_time_series_models,
-)
-
+    choose_best_time_series_models, evaluate_time_series_models)
 from src.preprocessing.download_data import ensure_dataset_exists
 from src.preprocessing.preprocess_data import preprocess_data
 from src.preprocessing.split_dataset import split_dataset
-from config.logging_config import setup_logging
 
 
 def load_config(config_path="config/config.yaml"):
@@ -82,14 +80,12 @@ def main():
             model_configs=config["models"].get("regression", {}),
         )
 
-        time_series_models = {}
-        """
-        train_time_series_models(
+        time_series_models = train_time_series_models(
             train_data=train_data_time_series,
             pollutant_headers=config["data"]["pollutant_headers"],
             model_configs=config["models"].get("time_series", {}),
         )
-        """
+
         # Evaluate models
         logger.info("Evaluating models")
         regression_evaluation_metrics = evaluate_regression_models(

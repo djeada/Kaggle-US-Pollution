@@ -1,10 +1,12 @@
 import logging
-from typing import Dict, List, Tuple, Any, Union
 from concurrent.futures import ProcessPoolExecutor, TimeoutError
+from typing import Any, Dict, List, Tuple, Union
+
+import pandas as pd
+import xgboost as xgb  # Importing XGBoost
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
-import pandas as pd
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -29,6 +31,8 @@ def train_single_regression_model(
         model = LinearRegression(**hyperparameters)
     elif model_type == "mlp":
         model = MLPRegressor(**hyperparameters)
+    elif model_type == "xgboost":
+        model = xgb.XGBRegressor(**hyperparameters)
     else:
         raise ValueError(f"Unsupported model type for regression: {model_type}")
 

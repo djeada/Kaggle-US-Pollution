@@ -1,6 +1,7 @@
+import logging
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
-import pandas as pd
 import logging
 
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,7 @@
-from pathlib import Path
-from kaggle.api.kaggle_api_extended import KaggleApi
 import logging
+from pathlib import Path
+
+from kaggle.api.kaggle_api_extended import KaggleApi
 
 logger = logging.getLogger(__name__)
 

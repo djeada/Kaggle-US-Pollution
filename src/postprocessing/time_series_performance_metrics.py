@@ -1,9 +1,10 @@
 import logging
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from statsmodels.tsa.arima.model import ARIMAResultsWrapper
-from statsmodels.tsa.statespace.sarimax import SARIMAXResultsWrapper
+
 import numpy as np
 import pandas as pd
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from statsmodels.tsa.arima.model import ARIMAResultsWrapper
+from statsmodels.tsa.statespace.sarimax import SARIMAXResultsWrapper
 
 from src.utils.utils import filter_data_by_cities
 

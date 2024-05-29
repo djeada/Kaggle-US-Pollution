@@ -1,8 +1,9 @@
 import logging
-from typing import List, Dict, Any
-import pandas as pd
-import numpy as np
+from typing import Any, Dict, List
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 logger = logging.getLogger(__name__)
@@ -124,9 +125,7 @@ def plot_city_predictions(
             ]
         )
         reg = LinearRegression().fit(X, y_combined)
-        plt.plot(
-            X, reg.predict(X), color="red", linestyle="--", label="Linear Regression"
-        )
+        plt.plot(X, reg.predict(X), color="red", linestyle="--", label="Trend")
 
         plt.xlabel("Time (Year-Month)")
         plt.ylabel(pollutant)

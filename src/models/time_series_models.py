@@ -1,14 +1,15 @@
 import logging
-from itertools import product
-from typing import Dict, List, Tuple, Any, Union
+import warnings
 from concurrent.futures import ProcessPoolExecutor, TimeoutError
+from itertools import product
+from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
-import warnings
+
 from src.utils.utils import filter_data_by_cities
 
 # Setup logging

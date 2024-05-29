@@ -1,8 +1,10 @@
 import logging
+
 import pandas as pd
 from matplotlib import pyplot as plt
 from statsmodels.tsa.arima.model import ARIMAResultsWrapper
 from statsmodels.tsa.statespace.sarimax import SARIMAXResultsWrapper
+
 from src.utils.utils import filter_data_by_cities
 
 logger = logging.getLogger(__name__)
