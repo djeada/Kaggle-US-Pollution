@@ -20,7 +20,9 @@ def evaluate_regression_models(models, test_data, input_headers, pollutant_heade
             mae = mean_absolute_error(y_test, predictions)
             r2 = r2_score(y_test, predictions)
 
-            metrics[pollutant].append((model_type, {"mse": mse, "mae": mae, "r2": r2}))
+            metrics[pollutant].append(
+                (model_type, {"mse": mse, "mae": mae, "r2": r2}, model)
+            )  # Include the model object
             logger.info(
                 f"Evaluation metrics for {pollutant} ({model_type}): MSE = {mse}, MAE = {mae}, R2 = {r2}"
             )
@@ -31,7 +33,7 @@ def evaluate_regression_models(models, test_data, input_headers, pollutant_heade
 def choose_best_regression_models(metrics, metric="r2"):
 
     if not metrics or all(not v for v in metrics.values()):
-        return list()
+        return dict()
 
     best_models = {}
 
@@ -40,7 +42,11 @@ def choose_best_regression_models(metrics, metric="r2"):
             model_metrics,
             key=lambda x: x[1][metric] if metric != "r2" else -x[1][metric],
         )
-        best_models[pollutant] = best_model
+        best_models[pollutant] = {
+            "model_type": best_model[0],
+            "metadata": best_model[1],
+            "model": best_model[2],  # Include the model object
+        }
         logger.info(
             f"Best regression model for {pollutant}: {best_model[0]} with {metric.upper()} = {best_model[1][metric]}, "
             f"MAE = {best_model[1]['mae']}, R2 = {best_model[1]['r2']}"

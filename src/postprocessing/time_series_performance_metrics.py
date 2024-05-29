@@ -92,6 +92,7 @@ def evaluate_time_series_models(
                     "mase": mase_value,
                     "smape": smape_value,
                 },
+                model,  # Save the model object as well
             )
         )
         logger.info(
@@ -104,13 +105,17 @@ def evaluate_time_series_models(
 def choose_best_time_series_models(metrics, metric="mse"):
 
     if not metrics or all(not v for v in metrics.values()):
-        return list()
+        return dict()
 
     best_models = {}
 
     for pollutant, model_metrics in metrics.items():
         best_model = min(model_metrics, key=lambda x: x[1][metric])
-        best_models[pollutant] = best_model
+        best_models[pollutant] = {
+            "model_type": best_model[0],
+            "metadata": best_model[1],
+            "model": best_model[2],  # Include the model object
+        }
         logger.info(
             f"Best time series model for pollutant '{pollutant}':\n"
             f"Location: State = {best_model[1]['state']}, City = {best_model[1]['city']}\n"

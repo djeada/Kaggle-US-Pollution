@@ -1,10 +1,14 @@
 import logging
+from itertools import product
 from typing import Dict, List, Tuple, Any, Union
 from concurrent.futures import ProcessPoolExecutor, TimeoutError
+
+import numpy as np
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-
+from statsmodels.tsa.stattools import adfuller
+import warnings
 from src.utils.utils import filter_data_by_cities
 
 # Setup logging
@@ -12,9 +16,84 @@ logger = logging.getLogger(__name__)
 
 ModelConfig = Dict[str, Union[str, Dict[str, Any]]]
 
+warnings.filterwarnings("ignore")
+
+
+def adf_test(series):
+    result = adfuller(series)
+    return result[1]  # return p-value
+
+
+def difference_series(series):
+    return series.diff().dropna()
+
+
+def grid_search_arima(
+    y_train, p_range: range, d_range: range, q_range: range
+) -> Tuple[Tuple[int, int, int], Any]:
+    best_aic = np.inf
+    best_order = None
+    best_mdl = None
+
+    for p in p_range:
+        for d in d_range:
+            for q in q_range:
+                try:
+                    temp_mdl = ARIMA(y_train, order=(p, d, q)).fit()
+                    temp_aic = temp_mdl.aic
+                    if temp_aic < best_aic:
+                        best_aic = temp_aic
+                        best_order = (p, d, q)
+                        best_mdl = temp_mdl
+                except:
+                    continue
+
+    return best_order, best_mdl
+
+
+def grid_search_sarima(
+    y_train,
+    p_range: range,
+    d_range: range,
+    q_range: range,
+    sp_range: range,
+    sd_range: range,
+    sq_range: range,
+    s_periods: List[int],
+) -> Tuple[Tuple[int, int, int], Tuple[int, int, int, int], Any]:
+    best_aic = np.inf
+    best_order = None
+    best_seasonal_order = None
+    best_mdl = None
+
+    parameter_combinations = product(
+        p_range, d_range, q_range, sp_range, sd_range, sq_range, s_periods
+    )
+
+    for params in parameter_combinations:
+        p, d, q, sp, sd, sq, s_period = params
+        try:
+            temp_mdl = SARIMAX(
+                y_train, order=(p, d, q), seasonal_order=(sp, sd, sq, s_period)
+            ).fit()
+            temp_aic = temp_mdl.aic
+            if temp_aic < best_aic:
+                best_aic = temp_aic
+                best_order = (p, d, q)
+                best_seasonal_order = (sp, sd, sq, s_period)
+                best_mdl = temp_mdl
+        except Exception as e:
+            print(f"An error occurred for parameters {params}: {e}")
+            continue
+
+    return best_order, best_seasonal_order, best_mdl
+
 
 def train_time_series_model(
-    model_type: str, y_train: pd.Series, hyperparameters: Dict[str, Any]
+    model_type: str,
+    y_train: pd.Series,
+    hyperparameters: Dict[str, Any],
+    s_periods: List[int] = [12],
 ) -> Any:
     # Change frequency to daily
     y_train = y_train.asfreq("D")
@@ -22,19 +101,33 @@ def train_time_series_model(
     # Interpolate missing values
     y_train = y_train.interpolate()
 
+    # Check stationarity and difference the series if necessary
+    p_value = adf_test(y_train)
+    if p_value > 0.05:
+        y_train = difference_series(y_train)
+
+    p_range: range = range(*hyperparameters.get("p_range", [0, 4]))
+    d_range: range = range(*hyperparameters.get("d_range", [0, 3]))
+    q_range: range = range(*hyperparameters.get("q_range", [0, 4]))
+    sp_range: range = range(*hyperparameters.get("sp_range", [0, 3]))
+    sd_range: range = range(*hyperparameters.get("sd_range", [0, 2]))
+    sq_range: range = range(*hyperparameters.get("sq_range", [0, 3]))
+
     if model_type == "arima":
-        order = hyperparameters.get("order", (1, 1, 1))
-        model = ARIMA(y_train, order=order).fit()
+        # Use grid search to find the best parameters
+        order, model = grid_search_arima(y_train, p_range, d_range, q_range)
+        logger.info(f"Best ARIMA order found: {order}")
     elif model_type == "sarima":
-        order = hyperparameters.get("order", (1, 1, 1))
-        seasonal_order = hyperparameters.get("seasonal_order", (1, 1, 1, 12))
-        model = SARIMAX(y_train, order=order, seasonal_order=seasonal_order).fit()
+        # Use grid search to find the best parameters
+        order, seasonal_order, model = grid_search_sarima(
+            y_train, p_range, d_range, q_range, sp_range, sd_range, sq_range, s_periods
+        )
+        logger.info(
+            f"Best SARIMA order found: {order} with seasonal order {seasonal_order}"
+        )
     else:
         raise ValueError(f"Unsupported model type for time series: {model_type}")
 
-    logger.info(
-        f"Time series model {model_type} fitted with order {order} and seasonal order {hyperparameters.get('seasonal_order')}"
-    )
     return model
 
 

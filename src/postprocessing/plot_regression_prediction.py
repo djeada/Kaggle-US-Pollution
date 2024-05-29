@@ -21,7 +21,7 @@ def generate_full_date_range(city_data):
 
 
 def plot_city_predictions(
-    models: Dict[str, Any],
+    models: Dict[str, Dict[str, Any]],  # Adjusted type hint for models
     input_headers: List[str],
     pollutant_headers: List[str],
     city_data: pd.DataFrame,
@@ -31,20 +31,6 @@ def plot_city_predictions(
     numeric_city,
     n: int = 3,
 ) -> None:
-    """
-    Plots actual vs predicted values for pollutants in a specific city, including future predictions.
-
-    Parameters:
-        models (Dict[str, Any]): Dictionary of trained models.
-        input_headers (List[str]): List of input features used for training.
-        pollutant_headers (List[str]): List of pollutant columns to predict.
-        city_data (pd.DataFrame): Data for the specific city.
-        state (str): State of the city.
-        city (str): City name.
-    """
-    if not models:
-        return
-
     # Ensure the year and month columns are integers
     city_data = city_data.copy()
     city_data["year"] = city_data["year"].astype(int)
@@ -70,7 +56,7 @@ def plot_city_predictions(
 
     for pollutant in pollutant_headers:
         y_test = city_data_agg[pollutant]
-        model = models[pollutant]
+        model = models[pollutant]["model"]  # Accessing the model object
         predictions = model.predict(X_test)
 
         # Extend predictions 10 years into the future
@@ -179,24 +165,15 @@ def plot_city_predictions(
 
 
 def plot_overall_predictions(
-    models: Dict[str, Any],
+    models: Dict[str, Dict[str, Any]],
     test_data: pd.DataFrame,
     input_headers: List[str],
     pollutant_headers: List[str],
 ) -> None:
-    """
-    Plots actual vs predicted values for pollutants over the entire dataset.
-
-    Parameters:
-        models (Dict[str, Any]): Dictionary of trained models.
-        test_data (pd.DataFrame): The test dataset.
-        input_headers (List[str]): List of input features used for training.
-        pollutant_headers (List[str]): List of pollutant columns to predict.
-    """
     for pollutant in pollutant_headers:
         plt.figure(figsize=(10, 6))
         y_test = test_data[pollutant]
-        model = models[pollutant]
+        model = models[pollutant]["model"]
         X_test = test_data[input_headers]
         predictions = model.predict(X_test)
 
@@ -230,14 +207,17 @@ def plot_regression_predictions(
         pollutant_headers (List[str]): List of pollutant columns to predict.
         specific_cities (List[Dict[str, str]]): List of specific cities to plot.
     """
+    if not models:
+        return
+
     try:
         # Map the specified cities to their numeric values
         city_mappings = []
         for city_info in specific_cities:
             state = city_info["state"]
             city = city_info["city"]
-            numeric_state = encoders['state'].transform([state])[0]
-            numeric_city = encoders['city'].transform([city])[0]
+            numeric_state = encoders["state"].transform([state])[0]
+            numeric_city = encoders["city"].transform([city])[0]
             city_mappings.append((numeric_state, numeric_city))
 
         # Plot for specific cities

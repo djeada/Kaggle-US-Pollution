@@ -82,12 +82,14 @@ def main():
             model_configs=config["models"].get("regression", {}),
         )
 
-        time_series_models = train_time_series_models(
+        time_series_models = {}
+        """
+        train_time_series_models(
             train_data=train_data_time_series,
             pollutant_headers=config["data"]["pollutant_headers"],
             model_configs=config["models"].get("time_series", {}),
         )
-
+        """
         # Evaluate models
         logger.info("Evaluating models")
         regression_evaluation_metrics = evaluate_regression_models(

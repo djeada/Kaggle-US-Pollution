@@ -1,5 +1,4 @@
 import logging
-
 import pandas as pd
 from matplotlib import pyplot as plt
 from statsmodels.tsa.arima.model import ARIMAResultsWrapper
@@ -10,7 +9,12 @@ logger = logging.getLogger(__name__)
 
 
 def plot_time_series_predictions(models, test_data, pollutant_headers):
-    for pollutant, (model_type, model_info) in models.items():
+    for pollutant, info in models.items():
+        model_type, model_info, model = (
+            info["model_type"],
+            info["metadata"],
+            info["model"],
+        )
         state, city = model_info["state"], model_info["city"]
         specific_cities = [{"state": state, "city": city}]
         city_test_data = filter_data_by_cities(test_data, specific_cities)
@@ -24,12 +28,8 @@ def plot_time_series_predictions(models, test_data, pollutant_headers):
 
         y_test = city_test_data[pollutant]
 
-        if isinstance(
-            model_info["model"], (ARIMAResultsWrapper, SARIMAXResultsWrapper)
-        ):
-            predictions = (
-                model_info["model"].get_forecast(steps=len(y_test)).predicted_mean
-            )
+        if isinstance(model, (ARIMAResultsWrapper, SARIMAXResultsWrapper)):
+            predictions = model.get_forecast(steps=len(y_test)).predicted_mean
         else:
             raise ValueError(f"Model type {model_type} not supported for time series")
 
