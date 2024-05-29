@@ -83,24 +83,24 @@ Each model is trained on our dataset and then used to make predictions about fut
 
 The table summarizes the performance of four different models (Random Forest, Linear Regression, MLP, XGBoost) across four different pollutants (NO2, O3, SO2, CO). The metrics used for evaluation are Mean Squared Error (MSE), Mean Absolute Error (MAE), and R-squared (R2).
 
-| Pollutant | Model Name         | MSE       | MAE       | R2         |
-|-----------|--------------------|-----------|-----------|------------|
-| no2_mean  | random_forest      | 0.500847  | 0.527968  | 0.487442   |
-| no2_mean  | linear_regression  | 0.893703  | 0.724917  | 0.085399   |
-| no2_mean  | mlp                | 1.631936  | 1.111352  | -0.670096  |
-| no2_mean  | xgboost            | 0.375543  | 0.443502  | 0.615676   |
-| o3_mean   | random_forest      | 0.553222  | 0.584864  | 0.448226   |
-| o3_mean   | linear_regression  | 0.973129  | 0.794671  | 0.029419   |
-| o3_mean   | mlp                | 1.105443  | 0.850906  | -0.102549  |
-| o3_mean   | xgboost            | 0.479388  | 0.545475  | 0.521867   |
-| so2_mean  | random_forest      | 0.473900  | 0.383522  | 0.508116   |
-| so2_mean  | linear_regression  | 0.808692  | 0.569529  | 0.160620   |
-| so2_mean  | mlp                | 3.265556  | 1.689203  | -2.389476  |
-| so2_mean  | xgboost            | 0.457051  | 0.381529  | 0.525605   |
-| co_mean   | random_forest      | 0.438661  | 0.428127  | 0.544274   |
-| co_mean   | linear_regression  | 0.827658  | 0.610868  | 0.140144   |
-| co_mean   | mlp                | 1.156388  | 0.876141  | -0.201374  |
-| co_mean   | xgboost            | 0.398178  | 0.407515  | 0.586332   |
+| Pollutant | Model Name         | MSE    | MAE    | R2     |
+|-----------|--------------------|--------|--------|--------|
+| no2_mean  | random_forest      | 0.501  | 0.528  | 0.487  |
+| no2_mean  | linear_regression  | 0.894  | 0.725  | 0.085  |
+| no2_mean  | mlp                | 1.632  | 1.111  | -0.670 |
+| no2_mean  | xgboost            | 0.376  | 0.444  | 0.616  |
+| o3_mean   | random_forest      | 0.553  | 0.585  | 0.448  |
+| o3_mean   | linear_regression  | 0.973  | 0.795  | 0.029  |
+| o3_mean   | mlp                | 1.105  | 0.851  | -0.103 |
+| o3_mean   | xgboost            | 0.479  | 0.545  | 0.522  |
+| so2_mean  | random_forest      | 0.474  | 0.384  | 0.508  |
+| so2_mean  | linear_regression  | 0.809  | 0.570  | 0.161  |
+| so2_mean  | mlp                | 3.266  | 1.689  | -2.389 |
+| so2_mean  | xgboost            | 0.457  | 0.382  | 0.526  |
+| co_mean   | random_forest      | 0.439  | 0.428  | 0.544  |
+| co_mean   | linear_regression  | 0.828  | 0.611  | 0.140  |
+| co_mean   | mlp                | 1.156  | 0.876  | -0.201 |
+| co_mean   | xgboost            | 0.398  | 0.408  | 0.586  |
 
 1. Model Performance Comparison:
    - **XGBoost consistently outperforms other models** in terms of lower MSE and higher R2 values across all pollutants. This suggests that XGBoost is the most accurate model for predicting pollutant levels.
@@ -109,10 +109,10 @@ The table summarizes the performance of four different models (Random Forest, Li
    - **MLP (Multi-Layer Perceptron) performs the worst**, with the highest MSE and lowest (often negative) R2 values, indicating it is not suitable for this dataset.
 
 2. Pollutant-wise Observations:
-   - **NO2 Mean:** XGBoost has the best performance (MSE: 0.375543, R2: 0.615676), while MLP has the worst (MSE: 1.631936, R2: -0.670096).
-   - **O3 Mean:** XGBoost again leads (MSE: 0.479388, R2: 0.521867), with MLP showing poor performance (MSE: 1.105443, R2: -0.102549).
-   - **SO2 Mean:** XGBoost and Random Forest are close in performance, with XGBoost slightly better (MSE: 0.457051, R2: 0.525605).
-   - **CO Mean:** XGBoost performs best (MSE: 0.398178, R2: 0.586332), with MLP having the poorest results (MSE: 1.156388, R2: -0.201374).
+   - **NO2 Mean:** XGBoost has the best performance (MSE: 0.376, R2: 0.616), while MLP has the worst (MSE: 1.632, R2: -0.670).
+   - **O3 Mean:** XGBoost again leads (MSE: 0.479, R2: 0.522), with MLP showing poor performance (MSE: 1.105, R2: -0.103).
+   - **SO2 Mean:** XGBoost and Random Forest are close in performance, with XGBoost slightly better (MSE: 0.457, R2: 0.526).
+   - **CO Mean:** XGBoost performs best (MSE: 0.398, R2: 0.586), with MLP having the poorest results (MSE: 1.156, R2: -0.201).
 
 ### Plots for Predictions of the Best Model (XGBoost) for Train Data
 
