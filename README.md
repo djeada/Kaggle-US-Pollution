@@ -1,5 +1,5 @@
 # Kaggle U.S. Pollution
-To analyze trends, predict future pollution levels, and identify factors influencing air quality in different regions of the United States using advanced data engineering and machine learning techniques.
+An analysis of the US Pollution dataset to explore trends, predict future pollution levels, and identify factors influencing air quality in various regions of the United States. This project employs advanced data engineering and machine learning techniques.
 
 ![dataset-cover](https://user-images.githubusercontent.com/37275728/198901751-79133990-37e2-4832-a698-3697dce69f50.jpeg)
 
